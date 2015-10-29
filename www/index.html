@@ -85,7 +85,7 @@ function setPlayListTable(playList){
 	console.log(playList);
 	$('#playList table').empty();
 		for (var arr in playList){
-			$('#playList table').append($('<tr>').append( '<input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+playList[arr].items[0].snippet.thumbnails.default.url+'" <td>' + playList[arr].items[0].snippet.title + '<td>' + playList[arr].items[0].id));
+			$('#playList table').append($('<tr>').append( '<input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+playList[arr].items[0].snippet.thumbnails.default.url+'" <td>' + playList[arr].items[0].snippet.title + '<td>' + playList[arr].items[0].id + '<td>' + playList[arr].items[0].contentDetails.duration));
 		}
 }
 	</script>
