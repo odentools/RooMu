@@ -85,7 +85,7 @@ function setPlayListTable(playList){
 	console.log(playList);
 	$('#playList table').empty();
 		for (var arr in playList){
-			$('#playList table').append($('<tr>').append( '<input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+playList[arr].items[0].snippet.thumbnails.default.url+'" <td>' + playList[arr].items[0].snippet.title + '<td>' + playList[arr].items[0].id + '<td>' + playList[arr].items[0].contentDetails.duration));
+			$('#playList table').append($('<tr>').append( '<td><input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+playList[arr].items[0].snippet.thumbnails.default.url+'"> <td>Title: ' + playList[arr].items[0].snippet.title + '<br>ID: ' + playList[arr].items[0].id + '<br>Time: ' + playList[arr].items[0].contentDetails.duration));
 		}
 }
 	</script>
@@ -94,22 +94,20 @@ function setPlayListTable(playList){
 
 	<body>
 
-		<textarea id="url" style="height: 100px; width: 450px;"></textarea>
-		<input id="send" type="button" value="送信">
-		<br>
 		<br>
 
 		<input id="play" type="button" value="再生">
-		<br>
 		<input id="pause" type="button" value="一時停止">
-		<br>
 		<input id="mute" type="button" value="ミュート">
-		<br>
 		<input id="next" type="button" value="次の動画">
-		<br>
 		<label>音量
 			<input id="volume" type="range">
 		</label>
+		<br>
+		<br>
+		
+		<input id="url"  type="text" style="width: 450px;">
+		<input id="send" type="button" value="送信">
 		<br>
 
 		<hr>
@@ -119,13 +117,10 @@ function setPlayListTable(playList){
 		</div>
 
 		<input id="up" type="button" value="上へ">
-		<br>
 		<input id="down" type="button" value="下へ">
-		<br>
 		<input id="delete" type="button" value="削除">
-		<br>
 		<input id="update" type="button" value="更新">
-		<br>
+		
 
 	</body>
 
