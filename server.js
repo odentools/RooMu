@@ -20,7 +20,7 @@ function sendNextVideoId(){
 	if(playList.length==0){
 		io.emit('nextVideoId', 'zzcWPu7dxSw');
 	} else {
-		io.emit('nextVideoId', playList.shift().items[0].id);
+		io.emit('nextVideoId', playList.shift().id);
 		io.emit('playList', playList);
 	}
 }
@@ -47,7 +47,7 @@ function getVideoData(video){
 
 	request.get(options, function (error, response, json) {
 		if(json.items.length > 0) {
-			playList.push(json);
+			playList.push(json.items[0]);
 		}
 		io.emit('playList', playList);
 		console.log(playList);
