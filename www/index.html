@@ -72,7 +72,7 @@ $(document).ready(function(){
 	});
 	
 	$('#update').on('click',function(){
-		socket.emit('playList','');
+		socket.emit('update','');
 	});
 
 	socket.on('playList', function(playList){
