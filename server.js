@@ -26,7 +26,19 @@ function sendNextVideoId(){
 }
 
 // 動画の情報を取得する
-function getVideoData(videoId){
+function getVideoData(video){
+	
+	var videoId;
+	
+	var a = video.match(/(https:\/\/www.youtube.com\/watch\?)(.*)v=([^&]*)/);
+	console.log("a:" + a);
+	
+	if(a){
+		videoId = a[3];
+	} else{
+		videoId = video;
+	}
+	
 	var json;
 	var options = {
 		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyAgsw-_vsAqdwjltVav4HmJfyKq4MsTKys' + '&part=' + 'snippet,contentDetails,statistics,status', 
@@ -34,7 +46,9 @@ function getVideoData(videoId){
 	};
 
 	request.get(options, function (error, response, json) {
-		playList.push(json);
+		if(json.items.length > 0) {
+			playList.push(json);
+		}
 		io.emit('playList', playList);
 		console.log(playList);
 	});
@@ -60,6 +74,7 @@ io.on('connection', function (socket) {
 		io.emit('mute', mute);
 	});
 	socket.on('volume', function(volume){
+		console.log(volume);
 		io.emit('volume', volume);
 	});
 

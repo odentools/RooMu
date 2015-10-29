@@ -28,6 +28,7 @@ socket.on('mute', function(play){
 	}
 });
 socket.on('volume', function(volume){
+	console.log(volume);
 	ytPlayer.setVolume(volume);
 });
 
