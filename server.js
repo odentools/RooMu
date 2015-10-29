@@ -25,7 +25,6 @@ function sendNextVideoId(){
 	}
 }
 
-//https://www.googleapis.com/youtube/v3/videos?id=zzcWPu7dxSw&key=AIzaSyAgsw-_vsAqdwjltVav4HmJfyKq4MsTKys&part=snippet,contentDetails,statistics,status
 // 動画の情報を取得する
 function getVideoData(videoId){
 	var json;
@@ -96,5 +95,4 @@ io.on('connection', function (socket) {
 		io.emit('playList', playList);
 	});
 	
-
 });
