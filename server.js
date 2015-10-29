@@ -8,6 +8,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var playList = new Array();
+var histryList = new Array();
 
 // wwwディレクトリを静的ファイルディレクトリとして登録
 app.use(express.static('www'));
@@ -17,11 +18,14 @@ server.listen(process.env.PORT || 3000);
 
 // 次の動画idをplayに送信する
 function sendNextVideoId(){
+	io.emit('timeZero', '');
 	if(playList.length==0){
 		io.emit('nextVideoId', 'zzcWPu7dxSw');
 	} else {
-		io.emit('nextVideoId', playList.shift().id);
-		io.emit('playList', playList);
+		var video = playList.shift()
+		io.emit('nextVideoId', video.id);
+		histryList.push(video);
+		io.emit('playList', {playList:playList, historyList:histryList});
 	}
 }
 
@@ -49,7 +53,7 @@ function getVideoData(video){
 		if(json.items.length > 0) {
 			playList.push(json.items[0]);
 		}
-		io.emit('playList', playList);
+		io.emit('playList', {playList:playList, historyList:histryList});
 		console.log(playList);
 	});
 
@@ -89,7 +93,7 @@ io.on('connection', function (socket) {
 			playList[parseInt(up)] = playList[parseInt(up)-1];
 			playList[parseInt(up)-1] = tmp;
 		}
-		io.emit('playList', playList);
+		io.emit('playList', {playList:playList, historyList:histryList});
 	});
 
 	socket.on('down', function(down){
@@ -98,16 +102,16 @@ io.on('connection', function (socket) {
 			playList[parseInt(down)+1] = playList[parseInt(down)];
 			playList[parseInt(down)] = tmp;
 		}
-		io.emit('playList', playList);
+		io.emit('playList', {playList:playList, historyList:histryList});
 	});
 	
 	socket.on('delete', function(del){
 		playList.splice(del,1);
-		io.emit('playList', playList);
+		io.emit('playList', {playList:playList, historyList:histryList});
 	});
 	
 	socket.on('update', function(update){
-		io.emit('playList', playList);
+		io.emit('playList', {playList:playList, historyList:histryList});
 	});
 	
 });
