@@ -1,40 +1,43 @@
-// IFrame Player API の読み込み
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+$(document).ready(function () {
+	// IFrame Player API の読み込み
+	var tag = document.createElement('script');
+	tag.src = "https://www.youtube.com/iframe_api";
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-var socket = io();
+	var socket = io();
 
-socket.on('nextVideoId', function(videoId){
-	ytPlayer.loadVideoById(videoId);
+	socket.on('nextVideoId', function (videoId) {
+		ytPlayer.loadVideoById(videoId);
+	});
+
+	// コントローラ部分
+	socket.on('play', function (play) {
+		ytPlayer.playVideo();
+	});
+	socket.on('pause', function (play) {
+		ytPlayer.pauseVideo();
+	});
+	socket.on('mute', function (play) {
+		// トグルる
+		if (ytPlayer.isMuted()) {
+			// ミュートの解除
+			ytPlayer.unMute();
+		} else {
+			// ミュート
+			ytPlayer.mute();
+		}
+	});
+	socket.on('volume', function (volume) {
+		console.log(volume);
+		ytPlayer.setVolume(volume);
+	});
+
 });
 
-// コントローラ部分
-socket.on('play', function(play){
-	ytPlayer.playVideo();
-});
-socket.on('pause', function(play){
-	ytPlayer.pauseVideo();
-});
-socket.on('mute', function(play){
-	// トグルる
-	if(ytPlayer.isMuted()) {
-		// ミュートの解除
-		ytPlayer.unMute();
-	} else {
-		// ミュート
-		ytPlayer.mute();
-	}
-});
-socket.on('volume', function(volume){
-	console.log(volume);
-	ytPlayer.setVolume(volume);
-});
 
-
-function getNextVideoId(){
-	socket.emit('next','');
+function getNextVideoId() {
+	socket.emit('next', '');
 }
 
 // YouTubeの埋め込み
@@ -53,10 +56,10 @@ function onYouTubeIframeAPIReady() {
 			// プレーヤーの設定
 			playerVars: {
 				autoplay: 1,
-				controls:0,
+				controls: 0,
 			},
 		}
-	);
+		);
 }
 
 // プレーヤーの準備ができたとき

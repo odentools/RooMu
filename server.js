@@ -14,7 +14,7 @@ var histryList = new Array();
 app.use(express.static('www'));
 
 // サーバを開始
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 8080);
 
 // 次の動画idをplayに送信する
 function sendNextVideoId(){
