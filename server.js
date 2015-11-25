@@ -45,7 +45,7 @@ function getVideoData(video){
 	
 	var json;
 	var options = {
-		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyAgsw-_vsAqdwjltVav4HmJfyKq4MsTKys' + '&part=' + 'snippet,contentDetails,statistics,status', 
+		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyBbmza9BLdJ-cL02uRoIclF2mkQq1sPoj8' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
 	};
 
