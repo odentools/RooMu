@@ -45,11 +45,12 @@ function getVideoData(video){
 	
 	var json;
 	var options = {
-		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyAQlaJZqHclqj0LAAok2G8JmJPV80FHvTU' + '&part=' + 'snippet,contentDetails,statistics,status', 
+		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyD2K8jTCjJOAddQQ6qFsFhghEShra9AX7c' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
 	};
 
 	request.get(options, function (error, response, json) {
+		console.log(json);
 		if(json.items.length > 0) {
 			playList.push(json.items[0]);
 		}
