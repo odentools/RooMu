@@ -14,7 +14,7 @@ var histryList = new Array();
 app.use(express.static('www'));
 
 // サーバを開始
-server.listen(process.env.PORT || 3000);
+server.listen(process.env.PORT || 8080);
 
 // 次の動画idをplayに送信する
 function sendNextVideoId(){
@@ -45,11 +45,12 @@ function getVideoData(video){
 	
 	var json;
 	var options = {
-		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyAgsw-_vsAqdwjltVav4HmJfyKq4MsTKys' + '&part=' + 'snippet,contentDetails,statistics,status', 
+		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyD2K8jTCjJOAddQQ6qFsFhghEShra9AX7c' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
 	};
 
 	request.get(options, function (error, response, json) {
+		console.log(json);
 		if(json.items.length > 0) {
 			playList.push(json.items[0]);
 		}
