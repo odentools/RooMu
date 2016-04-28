@@ -9,6 +9,8 @@ var io = require('socket.io')(server);
 
 var playList = new Array();
 var histryList = new Array();
+var nowVideo = null;
+var isLoop = true;
 
 // wwwディレクトリを静的ファイルディレクトリとして登録
 app.use(express.static('www'));
@@ -19,12 +21,21 @@ server.listen(process.env.PORT || 8081);
 // 次の動画idをplayに送信する
 function sendNextVideoId(){
 	io.emit('timeZero', '');
+	
+	// 初回起動時は落とす
+	if(playList.length == 0 &&nowVideo == null && isLoop == true) {
+		return;
+	}
 	if(playList.length==0){
-		io.emit('nextVideoId', 'zzcWPu7dxSw');
+		io.emit('nextVideoId', nowVideo.id);
+		isLoop = true;
 	} else {
-		var video = playList.shift()
-		io.emit('nextVideoId', video.id);
-		histryList.push(video);
+		isLoop = false;
+		nowVideo = playList.shift()
+		console.log(nowVideo.id+"を再生します？");
+		
+		io.emit('nextVideoId', nowVideo.id);
+		histryList.push(nowVideo);
 		io.emit('playList', {playList:playList, historyList:histryList});
 	}
 }
@@ -52,11 +63,10 @@ function getVideoData(video){
 	request.get(options, function (error, response, json) {
 		console.log(json);
 		if(json.items.length > 0) {
-			if(playList.length == 0) {
-				playList.push(json.items[0]);
+			playList.push(json.items[0]);
+			if(isLoop == true) {
+				console.log("isLoopがtrueだったから再生する");
 				sendNextVideoId();
-			} else {
-				playList.push(json.items[0]);
 			}
 		}
 		io.emit('playList', {playList:playList, historyList:histryList});
