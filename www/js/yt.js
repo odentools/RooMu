@@ -48,7 +48,6 @@ function onYouTubeIframeAPIReady() {
 		{
 			width: 640, // プレーヤーの幅
 			height: 390, // プレーヤーの高さ
-			videoId: 'zzcWPu7dxSw', // YouTubeのID
 			// イベントの設定
 			events: {
 				'onReady': onPlayerReady,
