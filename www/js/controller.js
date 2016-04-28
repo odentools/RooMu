@@ -5,7 +5,15 @@ $(document).ready(function(){
 	// 動画idを送信
 	$('#send').on('click',function(){
 		socket.emit('add',$('#url').val());
+		$('#url').val("");
 	});
+
+	$('#url').keypress( function ( e ) {
+		if ( e.which == 13 ) {
+			socket.emit('add',$('#url').val());
+			$('#url').val("");
+		}
+	} );
 
 	$('#play').on('click',function(){
 		socket.emit('play','');
