@@ -1,3 +1,5 @@
+var socket = io();
+
 $(document).ready(function () {
 	// IFrame Player API の読み込み
 	var tag = document.createElement('script');
@@ -5,7 +7,6 @@ $(document).ready(function () {
 	var firstScriptTag = document.getElementsByTagName('script')[0];
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	var socket = io();
 
 	socket.on('nextVideoId', function (videoId) {
 		ytPlayer.loadVideoById(videoId);
