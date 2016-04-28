@@ -29,8 +29,12 @@ $(document).ready(function () {
 			ytPlayer.mute();
 		}
 	});
-	socket.on('volume', function (volume) {
-		console.log(volume);
+	
+	socket.on('volumeOn', function (volume) {
+		ytPlayer.setVolume(volume);
+	});
+	
+	socket.on('volumeChange', function (volume) {
 		ytPlayer.setVolume(volume);
 	});
 
@@ -64,6 +68,7 @@ function onYouTubeIframeAPIReady() {
 
 // プレーヤーの準備ができたとき
 function onPlayerReady(event) {
+	event.target.setVolume(50);
 	getNextVideoId();
 }
 

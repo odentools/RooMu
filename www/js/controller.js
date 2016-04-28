@@ -2,6 +2,9 @@ var socket = io();
 var videoTime = 0;
 	
 $(document).ready(function(){
+
+	socket.emit('update','');
+	
 	// 動画idを送信
 	$('#send').on('click',function(){
 		socket.emit('add',$('#url').val());
@@ -32,11 +35,11 @@ $(document).ready(function(){
 	});
 
 	$('#volume').on('input',function(){
-		socket.emit('volume',$(this).val());
+		socket.emit('volumeOn',$(this).val());
 	});
 
 	$('#volume').change(function(){
-		socket.emit('volume',$(this).val());
+		socket.emit('volumeChange',$(this).val());
 	});
 
 	$('#up').on('click',function(){
@@ -66,6 +69,10 @@ $(document).ready(function(){
 	
 	socket.on('timeZero', function(){
 		videoTime = 0;
+	});
+	
+	socket.on('volumeChange', function(volume){
+		$('#volume').val(volume);
 	});
 	
 });

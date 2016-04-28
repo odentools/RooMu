@@ -11,6 +11,7 @@ var playList = new Array();
 var histryList = new Array();
 var nowVideo = null;
 var isLoop = true;
+var nowVolume=50;
 
 // wwwディレクトリを静的ファイルディレクトリとして登録
 app.use(express.static('www'));
@@ -89,10 +90,14 @@ io.on('connection', function (socket) {
 	socket.on('mute', function(mute){
 		io.emit('mute', mute);
 	});
-	socket.on('volume', function(volume){
-		console.log(volume);
-		io.emit('volume', volume);
+	socket.on('volumeOn', function(volume){
+		io.emit('volumeOn', volume);
 	});
+	socket.on('volumeChange', function(volume){
+		io.emit('volumeChange', volume);
+		nowVolume = volume;
+	});
+	
 
 	// play側とコントローラ側からの次の動画要求
 	socket.on('next', function(play){
@@ -124,6 +129,7 @@ io.on('connection', function (socket) {
 	
 	socket.on('update', function(update){
 		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('volumeChange', nowVolume);
 	});
 	
 });
