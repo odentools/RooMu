@@ -52,7 +52,12 @@ function getVideoData(video){
 	request.get(options, function (error, response, json) {
 		console.log(json);
 		if(json.items.length > 0) {
-			playList.push(json.items[0]);
+			if(playList.length == 0) {
+				playList.push(json.items[0]);
+				sendNextVideoId();
+			} else {
+				playList.push(json.items[0]);
+			}
 		}
 		io.emit('playList', {playList:playList, historyList:histryList});
 		console.log(playList);
