@@ -44,17 +44,13 @@ function sendNextVideoId(){
 function getVideoData(video){
 	
 	var videoId;
-	
-	var a = video.match(/(https:\/\/www.youtube.com\/watch\?)(.*)v=([^&]*)/);
-	console.log("a:" + a);
-	
-	if(a){
-		videoId = a[3];
-	} else{
+	var videoMatch = (video.match(/v=([^&]*)/) || video.match(/youtu\.be\/([^&]*)/));
+	if ( videoMatch ) {
+		videoId = videoMatch[1];
+	} else {
 		videoId = video;
 	}
 	
-	var json;
 	var options = {
 		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyA0yPvyvL2IKjRHAVvvNYQKFRafPwtzL8A' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
