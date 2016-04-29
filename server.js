@@ -121,7 +121,30 @@ io.on('connection', function (socket) {
 		}
 		io.emit('playList', {playList:playList, historyList:histryList});
 	});
-	
+
+	socket.on('mostUp', function(up){
+		for ( var i = up; i > 0; i--) {
+			if( 0 < i && i < playList.length ){
+				var tmp = playList[parseInt(i)];
+				playList[parseInt(i)] = playList[parseInt(i)-1];
+				playList[parseInt(i)-1] = tmp;
+			}
+		}
+		
+		io.emit('playList', {playList:playList, historyList:histryList});
+	});
+
+	socket.on('mostDown', function(down){
+		for ( var i = down, leni = playList.length; i < leni-1;i++) {
+			if( 0 <=  parseInt(i) && parseInt(i) < playList.length-1 ){
+				var tmp = playList[parseInt(i)+1];
+				playList[parseInt(i)+1] = playList[parseInt(i)];
+				playList[parseInt(i)] = tmp;
+			}
+		}
+		io.emit('playList', {playList:playList, historyList:histryList});
+	});
+
 	socket.on('delete', function(del){
 		playList.splice(del,1);
 		io.emit('playList', {playList:playList, historyList:histryList});

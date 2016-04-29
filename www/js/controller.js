@@ -51,7 +51,17 @@ $(document).ready(function(){
 		if ($('input[name=q2]:checked').val())
 			socket.emit('down',$('input[name=q2]:checked').val());
 	});
-	
+
+	$('#mostUp').on('click',function(){
+		if ($('input[name=q2]:checked').val())
+			socket.emit('mostUp',$('input[name=q2]:checked').val());
+	});
+
+	$('#mostDown').on('click',function(){
+		if ($('input[name=q2]:checked').val())
+			socket.emit('mostDown',$('input[name=q2]:checked').val());
+	});
+
 	$('#delete').on('click',function(){
 		if ($('input[name=q2]:checked').val())
 			socket.emit('delete',$('input[name=q2]:checked').val());
