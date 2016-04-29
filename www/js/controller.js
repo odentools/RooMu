@@ -74,7 +74,7 @@ $(document).ready(function(){
 	socket.on('playList', function(list){
 		setPlayListTable(list.playList);
 		setHistoryListTable(list.historyList);
-		showPlaing(list.historyList[list.historyList.length-1]);
+		showPlaing(list.nowVideo);
 	});
 	
 	socket.on('timeZero', function(){

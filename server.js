@@ -24,21 +24,22 @@ function sendNextVideoId(){
 	io.emit('timeZero', '');
 	
 	// 初回起動時は落とす
-	if(playList.length == 0 &&nowVideo == null && isLoop == true) {
+	if(playList.length == 0 && nowVideo == null &&  isLoop == true) {
 		return;
 	}
 	if(playList.length==0){
-		io.emit('nextVideoId', nowVideo.id);
+		// ToDo: histryListを消去する仕様に変更したら落ちるようになる
+		nowVideo = histryList[ Math.floor( Math.random() * histryList.length ) ]
 		isLoop = true;
 	} else {
 		isLoop = false;
 		nowVideo = playList.shift()
-		console.log(nowVideo.id+"を再生します？");
-		
-		io.emit('nextVideoId', nowVideo.id);
 		histryList.push(nowVideo);
-		io.emit('playList', {playList:playList, historyList:histryList});
 	}
+	
+	io.emit('nextVideoId', nowVideo.id);
+	io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	
 }
 
 // 動画の情報を取得する
@@ -131,7 +132,7 @@ io.on('connection', function (socket) {
 			}
 		}
 		
-		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
 
 	socket.on('mostDown', function(down){
@@ -142,16 +143,16 @@ io.on('connection', function (socket) {
 				playList[parseInt(i)] = tmp;
 			}
 		}
-		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
 
 	socket.on('delete', function(del){
 		playList.splice(del,1);
-		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
 	
 	socket.on('update', function(update){
-		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 		io.emit('volumeChange', nowVolume);
 	});
 	
