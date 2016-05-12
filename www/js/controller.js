@@ -2,10 +2,21 @@ var socket = io();
 var videoTime = 0;
 	
 $(document).ready(function(){
+
+	socket.emit('update','');
+	
 	// 動画idを送信
 	$('#send').on('click',function(){
 		socket.emit('add',$('#url').val());
+		$('#url').val("");
 	});
+
+	$('#url').keypress( function ( e ) {
+		if ( e.which == 13 ) {
+			socket.emit('add',$('#url').val());
+			$('#url').val("");
+		}
+	} );
 
 	$('#play').on('click',function(){
 		socket.emit('play','');
@@ -24,26 +35,38 @@ $(document).ready(function(){
 	});
 
 	$('#volume').on('input',function(){
-		socket.emit('volume',$(this).val());
+		socket.emit('volumeOn',$(this).val());
 	});
 
 	$('#volume').change(function(){
-		socket.emit('volume',$(this).val());
+		socket.emit('volumeChange',$(this).val());
 	});
 
 	$('#up').on('click',function(){
-		if ($('input[name=q2]:checked').val())
-			socket.emit('up',$('input[name=q2]:checked').val());
+		if ($('input[name=pl]:checked').val())
+			socket.emit('up',$('input[name=pl]:checked').val());
 	});
 
 	$('#down').on('click',function(){
-		if ($('input[name=q2]:checked').val())
-			socket.emit('down',$('input[name=q2]:checked').val());
+		if ($('input[name=pl]:checked').val())
+			socket.emit('down',$('input[name=pl]:checked').val());
 	});
-	
+
+	$('#mostUp').on('click',function(){
+		if ($('input[name=pl]:checked').val())
+			socket.emit('mostUp',$('input[name=pl]:checked').val());
+	});
+
+	$('#mostDown').on('click',function(){
+		if ($('input[name=pl]:checked').val())
+			socket.emit('mostDown',$('input[name=pl]:checked').val());
+	});
+
 	$('#delete').on('click',function(){
-		if ($('input[name=q2]:checked').val())
-			socket.emit('delete',$('input[name=q2]:checked').val());
+		if ($('input[name=pl]:checked').val())
+			socket.emit('deletePlay',$('input[name=pl]:checked').val());
+		if ($('input[name=hl]:checked').val())
+			socket.emit('deleteHistry',$('input[name=hl]:checked').val());
 	});
 	
 	$('#update').on('click',function(){
@@ -53,11 +76,15 @@ $(document).ready(function(){
 	socket.on('playList', function(list){
 		setPlayListTable(list.playList);
 		setHistoryListTable(list.historyList);
-		showPlaing(list.historyList[list.historyList.length-1]);
+		showPlaing(list.nowVideo);
 	});
 	
 	socket.on('timeZero', function(){
 		videoTime = 0;
+	});
+	
+	socket.on('volumeChange', function(volume){
+		$('#volume').val(volume);
 	});
 	
 });
@@ -66,15 +93,15 @@ $(document).ready(function(){
 function setPlayListTable(playList){
 	$('#playList table').empty();
 		for (var arr in playList){
-			$('#playList table').append($('<tr>').append( '<td><input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+playList[arr].snippet.thumbnails.default.url+'"> <td>Title: ' + playList[arr].snippet.title + '<br>ID: ' + playList[arr].id + '<br>Time: ' + playList[arr].contentDetails.duration));
+			$('#playList table').append($('<tr>').append( '<td><input class="point" type="radio" name="pl" value="'+arr+'"><td><img src="'+playList[arr].snippet.thumbnails.default.url+'"> <td>Title: ' + playList[arr].snippet.title + '<br>ID: ' + playList[arr].id + '<br>Time: ' + playList[arr].contentDetails.duration));
 		}
 }
 
-// playListのテーブルの作成
+// historyListのテーブルの作成
 function setHistoryListTable(historyList){
 	$('#historyList table').empty();
 		for (var arr in historyList){
-			$('#historyList table').append($('<tr>').append( '<td><input class="point" type="radio" name="q2" value="'+arr+'"><td><img src="'+historyList[arr].snippet.thumbnails.default.url+'"> <td>Title: ' + historyList[arr].snippet.title + '<br>ID: ' + historyList[arr].id + '<br>Time: ' +historyList[arr].contentDetails.duration));
+			$('#historyList table').append($('<tr>').append( '<td><input class="point" type="radio" name="hl" value="'+arr+'"><td><img src="'+historyList[arr].snippet.thumbnails.default.url+'"> <td>Title: ' + historyList[arr].snippet.title + '<br>ID: ' + historyList[arr].id + '<br>Time: ' +historyList[arr].contentDetails.duration));
 		}
 }
 

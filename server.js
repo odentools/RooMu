@@ -9,43 +9,52 @@ var io = require('socket.io')(server);
 
 var playList = new Array();
 var histryList = new Array();
+var nowVideo = null;
+var isLoop = true;
+var nowVolume=50;
 
 // wwwディレクトリを静的ファイルディレクトリとして登録
 app.use(express.static('www'));
 
 // サーバを開始
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 8081);
 
 // 次の動画idをplayに送信する
 function sendNextVideoId(){
 	io.emit('timeZero', '');
-	if(playList.length==0){
-		io.emit('nextVideoId', 'zzcWPu7dxSw');
-	} else {
-		var video = playList.shift()
-		io.emit('nextVideoId', video.id);
-		histryList.push(video);
-		io.emit('playList', {playList:playList, historyList:histryList});
+	
+	// 初回起動時は落とす
+	if(playList.length == 0 && nowVideo == null &&  isLoop == true) {
+		return;
 	}
+	if(playList.length==0){
+		// ToDo: histryListを消去する仕様に変更したら落ちるようになる
+		nowVideo = histryList[ Math.floor( Math.random() * histryList.length ) ]
+		isLoop = true;
+	} else {
+		isLoop = false;
+		nowVideo = playList.shift()
+		histryList.push(nowVideo);
+	}
+	
+	io.emit('nextVideoId', nowVideo.id);
+	io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	
 }
 
 // 動画の情報を取得する
 function getVideoData(video){
 	
 	var videoId;
-	
-	var a = video.match(/(https:\/\/www.youtube.com\/watch\?)(.*)v=([^&]*)/);
-	console.log("a:" + a);
-	
-	if(a){
-		videoId = a[3];
-	} else{
+	var videoMatch = (video.match(/v=([^&]*)/) || video.match(/youtu\.be\/([^&]*)/));
+	if ( videoMatch ) {
+		videoId = videoMatch[1];
+	} else {
 		videoId = video;
 	}
 	
-	var json;
 	var options = {
-		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyD2K8jTCjJOAddQQ6qFsFhghEShra9AX7c' + '&part=' + 'snippet,contentDetails,statistics,status', 
+		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyA0yPvyvL2IKjRHAVvvNYQKFRafPwtzL8A' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
 	};
 
@@ -53,6 +62,10 @@ function getVideoData(video){
 		console.log(json);
 		if(json.items.length > 0) {
 			playList.push(json.items[0]);
+			if(isLoop == true) {
+				console.log("isLoopがtrueだったから再生する");
+				sendNextVideoId();
+			}
 		}
 		io.emit('playList', {playList:playList, historyList:histryList});
 		console.log(playList);
@@ -78,10 +91,14 @@ io.on('connection', function (socket) {
 	socket.on('mute', function(mute){
 		io.emit('mute', mute);
 	});
-	socket.on('volume', function(volume){
-		console.log(volume);
-		io.emit('volume', volume);
+	socket.on('volumeOn', function(volume){
+		io.emit('volumeOn', volume);
 	});
+	socket.on('volumeChange', function(volume){
+		io.emit('volumeChange', volume);
+		nowVolume = volume;
+	});
+	
 
 	// play側とコントローラ側からの次の動画要求
 	socket.on('next', function(play){
@@ -105,14 +122,43 @@ io.on('connection', function (socket) {
 		}
 		io.emit('playList', {playList:playList, historyList:histryList});
 	});
-	
-	socket.on('delete', function(del){
-		playList.splice(del,1);
-		io.emit('playList', {playList:playList, historyList:histryList});
+
+	socket.on('mostUp', function(up){
+		for ( var i = up; i > 0; i--) {
+			if( 0 < i && i < playList.length ){
+				var tmp = playList[parseInt(i)];
+				playList[parseInt(i)] = playList[parseInt(i)-1];
+				playList[parseInt(i)-1] = tmp;
+			}
+		}
+		
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
-	
+
+	socket.on('mostDown', function(down){
+		for ( var i = down, leni = playList.length; i < leni-1;i++) {
+			if( 0 <=  parseInt(i) && parseInt(i) < playList.length-1 ){
+				var tmp = playList[parseInt(i)+1];
+				playList[parseInt(i)+1] = playList[parseInt(i)];
+				playList[parseInt(i)] = tmp;
+			}
+		}
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	});
+
+	socket.on('deletePlay', function(del){
+		playList.splice(del,1);
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	});
+
+	socket.on('deleteHistry', function(del){
+		histryList.splice(del,1);
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	});
+
 	socket.on('update', function(update){
-		io.emit('playList', {playList:playList, historyList:histryList});
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+		io.emit('volumeChange', nowVolume);
 	});
 	
 });

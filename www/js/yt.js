@@ -1,3 +1,5 @@
+var socket = io();
+
 $(document).ready(function () {
 	// IFrame Player API の読み込み
 	var tag = document.createElement('script');
@@ -5,7 +7,6 @@ $(document).ready(function () {
 	var firstScriptTag = document.getElementsByTagName('script')[0];
 	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	var socket = io();
 
 	socket.on('nextVideoId', function (videoId) {
 		ytPlayer.loadVideoById(videoId);
@@ -28,8 +29,12 @@ $(document).ready(function () {
 			ytPlayer.mute();
 		}
 	});
-	socket.on('volume', function (volume) {
-		console.log(volume);
+	
+	socket.on('volumeOn', function (volume) {
+		ytPlayer.setVolume(volume);
+	});
+	
+	socket.on('volumeChange', function (volume) {
 		ytPlayer.setVolume(volume);
 	});
 
@@ -47,7 +52,6 @@ function onYouTubeIframeAPIReady() {
 		{
 			width: 640, // プレーヤーの幅
 			height: 390, // プレーヤーの高さ
-			videoId: 'zzcWPu7dxSw', // YouTubeのID
 			// イベントの設定
 			events: {
 				'onReady': onPlayerReady,
@@ -64,6 +68,7 @@ function onYouTubeIframeAPIReady() {
 
 // プレーヤーの準備ができたとき
 function onPlayerReady(event) {
+	event.target.setVolume(50);
 	getNextVideoId();
 }
 
