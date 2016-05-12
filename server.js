@@ -54,21 +54,23 @@ function getVideoData(video){
 	}
 	
 	var options = {
-		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyCtpC85J9h0iGyr4YbpqkSrWloliGkXD6c' + '&part=' + 'snippet,contentDetails,statistics,status', 
+		url: 'https://www.googleapis.com/youtube/v3/videos?' + 'id=' + videoId + '&key=' + 'AIzaSyD_xq6yy9jY7XCCiIAc43MsPH2PRq6WcRo' + '&part=' + 'snippet,contentDetails,statistics,status', 
 		json: true
 	};
 
 	request.get(options, function (error, response, json) {
-		console.log(json);
-		if(json.items.length > 0) {
-			playList.push(json.items[0]);
-			if(isLoop == true) {
-				console.log("isLoopがtrueだったから再生する");
-				sendNextVideoId();
+		if (!error) {
+			console.log(json);
+			if(json.items.length > 0) {
+				playList.push(json.items[0]);
+				if(isLoop == true) {
+					console.log("isLoopがtrueだったから再生する");
+					sendNextVideoId();
+				}
 			}
+			io.emit('playList', {playList:playList, historyList:histryList});
+			console.log(playList);
 		}
-		io.emit('playList', {playList:playList, historyList:histryList});
-		console.log(playList);
 	});
 
 }
