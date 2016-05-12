@@ -146,11 +146,16 @@ io.on('connection', function (socket) {
 		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
 
-	socket.on('delete', function(del){
+	socket.on('deletePlay', function(del){
 		playList.splice(del,1);
 		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 	});
-	
+
+	socket.on('deleteHistry', function(del){
+		histryList.splice(del,1);
+		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
+	});
+
 	socket.on('update', function(update){
 		io.emit('playList', {playList:playList, historyList:histryList, nowVideo:nowVideo});
 		io.emit('volumeChange', nowVolume);
